@@ -1,6 +1,6 @@
 const express = require('express');
 const uploadRoutes = require('./routes/uploadRoutes');
-
+const connectDB = require('./config/db');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -9,6 +9,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // API Routes
 app.use('/api', uploadRoutes);
+
+// Initialize the database pool
+connectDB();
 
 app.use((err, req, res, next) => {
   if (err instanceof require('multer').MulterError) {
