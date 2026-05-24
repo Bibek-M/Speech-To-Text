@@ -1,6 +1,8 @@
 const express = require('express');
 const uploadRoutes = require('./routes/uploadRoutes');
 const connectDB = require('./config/db');
+require('dotenv').config(); 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -13,6 +15,7 @@ app.use('/api', uploadRoutes);
 // Initialize the database pool
 connectDB();
 
+// Global error handler (including your Multer check)
 app.use((err, req, res, next) => {
   if (err instanceof require('multer').MulterError) {
     return res.status(400).json({ error: `Multer Error: ${err.message}` });
