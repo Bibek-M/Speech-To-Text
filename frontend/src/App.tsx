@@ -1,5 +1,49 @@
 import { Mic, CloudUpload } from "lucide-react";
+import axios from 'axios';
+import {useState} from 'react'
 const App = () => {
+  const [file, setFile] = useState(null);
+  const [status, setStatus] = useState("");
+
+  // Handle file selection from input
+  const handleFileChange = (e:any) => {
+    setFile(e.target.files[0]);
+  };
+
+  // Prepare the form data package
+  const createFormData = () => {
+    if (!file) {
+      setStatus("Please select an audio file first.");
+      return null;
+    }
+    const formData = new FormData();
+    // 'audio' must match the key name the backend Multer middleware expects
+    formData.append("audio", file);
+    return formData;
+  };
+    const uploadWithAxios = async () => {
+      const formData = createFormData();
+      if (!formData) return;
+
+      setStatus("Uploading with Axios...");
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/upload",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        setStatus(`Axios Success: ${response.data.message}`);
+      } catch (error:any) {
+        setStatus(
+          `Axios Error: ${error.response?.data?.message || error.message}`
+        );
+      }
+    };
+  
   return (
     <div className="bg-[rgba(0,0,0,0.35)] h-screen w-100vw">
       <nav className="text-6xl font-bold flex justify-self-center">
